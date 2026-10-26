@@ -1,8 +1,9 @@
 
-from flask import Flask, request, render_template
+from flask import Flask, render_template, request
 from EmotionDetection import emotion_detector
 
 app = Flask("Emotion Detector")
+
 
 @app.route("/")
 def render_index_page():
@@ -12,16 +13,13 @@ def render_index_page():
 
 @app.route("/emotionDetector")
 def emotion_detector_route():
-    """Analyze the submitted text and return the emotion results."""
+    """Analyze the submitted text and handle invalid input."""
     text_to_analyze = request.args.get("textToAnalyze")
-
-    if not text_to_analyze:
-        return "Please provide text to analyze!", 400
 
     response = emotion_detector(text_to_analyze)
 
-    if response is None:
-        return "Unable to analyze the provided text.", 500
+    if response["dominant_emotion"] is None:
+        return "¡Texto inválido! ¡Por favor, inténtalo de nuevo!"
 
     result = (
         f"For the given statement, the system response is "
